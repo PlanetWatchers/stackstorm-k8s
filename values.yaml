@@ -1118,6 +1118,8 @@ redis:
   # password: mysupersecretpassword
   networkPolicy:
     enabled: false
+  socketTimeout: 90
+  lockTimeout: 150
   usePassword: false
   metrics:
     enabled: false

@@ -137,10 +137,11 @@ Generate list of nodes for Redis with Sentinel connection string, based on numbe
 {{- end }}
 {{- $replicas := (int (index .Values "redis" "cluster" "slaveCount")) }}
 {{- $master_name := (index .Values "redis" "sentinel" "masterSet") }}
+{{- $socket_timeout := (index .Values "redis" "socketTimeout") }}
 {{- $sentinel_port := (index .Values "redis" "sentinel" "port") }}
 {{- range $index0 := until $replicas -}}
   {{- if eq $index0 0 -}}
-    {{ $.Release.Name }}-redis-node-{{ $index0 }}.{{ $.Release.Name }}-redis-headless.{{ $.Release.Namespace }}.svc.{{ $.Values.clusterDomain }}:{{ $sentinel_port }}?sentinel={{ $master_name }}
+    {{ $.Release.Name }}-redis-node-{{ $index0 }}.{{ $.Release.Name }}-redis-headless.{{ $.Release.Namespace }}.svc.{{ $.Values.clusterDomain }}:{{ $sentinel_port }}?socket_timeout={{ $socket_timeout }}&sentinel={{ $master_name }}
   {{- else -}}
     &sentinel_fallback={{ $.Release.Name }}-redis-node-{{ $index0 }}.{{ $.Release.Name }}-redis-headless.{{ $.Release.Namespace }}.svc.{{ $.Values.clusterDomain }}:{{ $sentinel_port }}
   {{- end -}}
