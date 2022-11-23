@@ -20,6 +20,10 @@ data:
     url = redis://{{ template "stackstorm-ha.redis-password" $ }}{{ template "stackstorm-ha.redis-nodes" $ }}
     lock_timeout = {{ index .Values "redis" "lockTimeout" }}
     {{- end }}
+    {{- if index .Values "zookeeper" "enabled" }}
+    [coordination]
+    url = kazoo://?hosts={{ template "stackstorm-ha.zookeeper-hosts" $ }}
+    {{- end }}
     {{- if index .Values "rabbitmq" "enabled" }}
     [messaging]
     url = amqp://{{ required "rabbitmq.auth.username is required!" (index .Values "rabbitmq" "auth" "username") }}:{{ required "rabbitmq.auth.password is required!" (index .Values "rabbitmq" "auth" "password") }}@{{ .Release.Name }}-rabbitmq:5672{{ required "rabbitmq.ingress.path is required!" (index .Values "rabbitmq" "ingress" "path") }}
