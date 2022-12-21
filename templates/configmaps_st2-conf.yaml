@@ -18,6 +18,11 @@ data:
     {{- if index .Values "redis" "enabled" }}
     [coordination]
     url = redis://{{ template "stackstorm-ha.redis-password" $ }}{{ template "stackstorm-ha.redis-nodes" $ }}
+    lock_timeout = {{ index .Values "redis" "lockTimeout" }}
+    {{- end }}
+    {{- if index .Values "zookeeper" "enabled" }}
+    [coordination]
+    url = kazoo://?hosts={{ template "stackstorm-ha.zookeeper-hosts" $ }}
     {{- end }}
     {{- if index .Values "rabbitmq" "enabled" }}
     [messaging]
