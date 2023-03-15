@@ -1,0 +1,243 @@
+{{- if .Values.st2web.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-st2web
+  labels: {{- include "stackstorm-ha.labels" (list $ "st2web") | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-st2web
+  minReplicas: {{ .Values.st2web.hpa.minReplicas }}
+  maxReplicas: {{ .Values.st2web.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.st2web.hpa.cpuUtilization }}
+{{- end }}
+---
+{{- if .Values.st2auth.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-st2auth
+  labels: {{- include "stackstorm-ha.labels" (list $ "st2auth") | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-st2auth
+  minReplicas: {{ .Values.st2auth.hpa.minReplicas }}
+  maxReplicas: {{ .Values.st2auth.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.st2auth.hpa.cpuUtilization }}
+{{- end }}
+---
+{{- if .Values.st2api.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-st2api
+  labels: {{- include "stackstorm-ha.labels" (list $ "st2api") | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-st2api
+  minReplicas: {{ .Values.st2api.hpa.minReplicas }}
+  maxReplicas: {{ .Values.st2api.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.st2api.hpa.cpuUtilization }}
+{{- end }}
+---
+{{- if .Values.st2stream.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-st2stream
+  labels: {{- include "stackstorm-ha.labels" (list $ "st2stream") | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-st2stream
+  minReplicas: {{ .Values.st2stream.hpa.minReplicas }}
+  maxReplicas: {{ .Values.st2stream.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.st2stream.hpa.cpuUtilization }}
+{{- end }}
+---
+{{- if .Values.st2rulesengine.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-st2rulesengine
+  labels: {{- include "stackstorm-ha.labels" (list $ "st2rulesengine") | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-st2rulesengine
+  minReplicas: {{ .Values.st2rulesengine.hpa.minReplicas }}
+  maxReplicas: {{ .Values.st2rulesengine.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.st2rulesengine.hpa.cpuUtilization }}
+{{- end }}
+---
+{{- if .Values.st2timersengine.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-st2timersengine
+  labels: {{- include "stackstorm-ha.labels" (list $ "st2timersengine") | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-st2timersengine
+  minReplicas: {{ .Values.st2timersengine.hpa.minReplicas }}
+  maxReplicas: {{ .Values.st2timersengine.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.st2timersengine.hpa.cpuUtilization }}
+{{- end }}
+---
+{{- if .Values.st2workflowengine.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-st2workflowengine
+  labels: {{- include "stackstorm-ha.labels" (list $ "st2workflowengine") | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-st2workflowengine
+  minReplicas: {{ .Values.st2workflowengine.hpa.minReplicas }}
+  maxReplicas: {{ .Values.st2workflowengine.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.st2workflowengine.hpa.cpuUtilization }}
+{{- end }}
+---
+{{- if .Values.st2scheduler.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-st2scheduler
+  labels: {{- include "stackstorm-ha.labels" (list $ "st2scheduler") | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-st2scheduler
+  minReplicas: {{ .Values.st2scheduler.hpa.minReplicas }}
+  maxReplicas: {{ .Values.st2scheduler.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.st2scheduler.hpa.cpuUtilization }}
+{{- end }}
+---
+{{- if .Values.st2notifier.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-st2notifier
+  labels: {{- include "stackstorm-ha.labels" (list $ "st2notifier") | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-st2notifier
+  minReplicas: {{ .Values.st2notifier.hpa.minReplicas }}
+  maxReplicas: {{ .Values.st2notifier.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.st2notifier.hpa.cpuUtilization }}
+{{- end }}
+---
+{{- if .Values.st2actionrunner.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-st2actionrunner
+  labels: {{- include "stackstorm-ha.labels" (list $ "st2actionrunner") | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-st2actionrunner
+  minReplicas: {{ .Values.st2actionrunner.hpa.minReplicas }}
+  maxReplicas: {{ .Values.st2actionrunner.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.st2actionrunner.hpa.cpuUtilization }}
+{{- end }}
+---
+{{- if .Values.st2sensorcontainer.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-st2sensorcontainer
+  labels: {{- include "stackstorm-ha.labels" (list $ "st2sensorcontainer") | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-st2sensorcontainer
+  minReplicas: {{ .Values.st2sensorcontainer.hpa.minReplicas }}
+  maxReplicas: {{ .Values.st2sensorcontainer.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.st2sensorcontainer.hpa.cpuUtilization }}
+{{- end }}
+---
+

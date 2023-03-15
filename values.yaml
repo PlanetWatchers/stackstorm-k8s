@@ -382,6 +382,18 @@ st2web:
   # see: https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/
   postStartScript: ""
   preStopSleep: "10"
+  # hpa configuration
+  hpa:
+    # Set to true to enable the Horizontal Pod Autoscaler
+    enabled: false
+    # The minimum number of replicas the HPA should maintain
+    minReplicas: 2
+    # The maximum number of replicas the HPA should scale to
+    maxReplicas: 2
+    # Target average CPU utilization as a percentage (1-100) for scaling the number of replicas
+    cpuUtilization: 80
+
+
 
 # https://docs.stackstorm.com/reference/ha.html#st2auth
 # Multiple st2auth processes can be behind a load balancer in an active-active configuration.
@@ -422,6 +434,15 @@ st2auth:
   ## Note that Helm templating is supported in 'mount' and 'volume'
   extra_volumes: []
     # see examples under st2actionrunner.extra_volumes
+  hpa:
+    # Set to true to enable the Horizontal Pod Autoscaler
+    enabled: false
+    # The minimum number of replicas the HPA should maintain
+    minReplicas: 2
+    # The maximum number of replicas the HPA should scale to
+    maxReplicas: 2
+    # Target average CPU utilization as a percentage (1-100) for scaling the number of replicas
+    cpuUtilization: 80
 
 # https://docs.stackstorm.com/reference/ha.html#st2api
 # Multiple st2api process can be behind a load balancer in an active-active configuration.
@@ -462,6 +483,15 @@ st2api:
   ## Note that Helm templating is supported in 'mount' and 'volume'
   extra_volumes: []
     # see examples under st2actionrunner.extra_volumes
+  hpa:
+    # Set to true to enable the Horizontal Pod Autoscaler
+    enabled: false
+    # The minimum number of replicas the HPA should maintain
+    minReplicas: 2
+    # The maximum number of replicas the HPA should scale to
+    maxReplicas: 2
+    # Target average CPU utilization as a percentage (1-100) for scaling the number of replicas
+    cpuUtilization: 80
 
 # https://docs.stackstorm.com/reference/ha.html#st2stream
 # Multiple st2stream process can be behind a load balancer in an active-active configuration.
@@ -502,6 +532,15 @@ st2stream:
   ## Note that Helm templating is supported in 'mount' and 'volume'
   extra_volumes: []
     # see examples under st2actionrunner.extra_volumes
+  hpa:
+    # Set to true to enable the Horizontal Pod Autoscaler
+    enabled: false
+    # The minimum number of replicas the HPA should maintain
+    minReplicas: 2
+    # The maximum number of replicas the HPA should scale to
+    maxReplicas: 2
+    # Target average CPU utilization as a percentage (1-100) for scaling the number of replicas
+    cpuUtilization: 80
 
 # https://docs.stackstorm.com/reference/ha.html#st2rulesengine
 # Multiple st2rulesengine processes can run in active-active with only connections to MongoDB and RabbitMQ. All these will share the TriggerInstance load and naturally pick up more work if one or more of the processes becomes unavailable.
@@ -509,8 +548,8 @@ st2rulesengine:
   replicas: 2
   resources:
     requests:
-      memory: "75Mi"
-      cpu: "25m"
+      memory: "4Gi"
+      cpu: "1100m"
   annotations: {}
   # Override default image settings (for now, only tag can be overridden)
   image: {}
@@ -533,6 +572,15 @@ st2rulesengine:
   ## Note that Helm templating is supported in 'mount' and 'volume'
   extra_volumes: []
     # see examples under st2actionrunner.extra_volumes
+  hpa:
+    # Set to true to enable the Horizontal Pod Autoscaler
+    enabled: false
+    # The minimum number of replicas the HPA should maintain
+    minReplicas: 2
+    # The maximum number of replicas the HPA should scale to
+    maxReplicas: 2
+    # Target average CPU utilization as a percentage (1-100) for scaling the number of replicas
+    cpuUtilization: 80
 
 # https://docs.stackstorm.com/reference/ha.html#st2timersengine
 # Only single replica is created via K8s Deployment as timersengine can't work in active-active mode at the moment and it relies on K8s failover/reschedule capabilities to address cases of process failure.
@@ -563,6 +611,15 @@ st2timersengine:
   ## Note that Helm templating is supported in 'mount' and 'volume'
   extra_volumes: []
     # see examples under st2actionrunner.extra_volumes
+  hpa:
+    # Set to true to enable the Horizontal Pod Autoscaler
+    enabled: false
+    # The minimum number of replicas the HPA should maintain
+    minReplicas: 1
+    # The maximum number of replicas the HPA should scale to
+    maxReplicas: 1
+    # Target average CPU utilization as a percentage (1-100) for scaling the number of replicas
+    cpuUtilization: 80
 
 # https://docs.stackstorm.com/reference/ha.html#st2workflowengine
 # Multiple st2workflowengine processes can run in active-active mode and will share the load and pick up more work if one or more of the processes become available.
@@ -596,7 +653,15 @@ st2workflowengine:
   ## Note that Helm templating is supported in 'mount' and 'volume'
   extra_volumes: []
     # see examples under st2actionrunner.extra_volumes
-
+  hpa:
+    # Set to true to enable the Horizontal Pod Autoscaler
+    enabled: false
+    # The minimum number of replicas the HPA should maintain
+    minReplicas: 2
+    # The maximum number of replicas the HPA should scale to
+    maxReplicas: 2
+    # Target average CPU utilization as a percentage (1-100) for scaling the number of replicas
+    cpuUtilization: 80
 # https://docs.stackstorm.com/reference/ha.html#st2scheduler
 # TODO: Description TBD
 st2scheduler:
@@ -627,6 +692,15 @@ st2scheduler:
   ## Note that Helm templating is supported in 'mount' and 'volume'
   extra_volumes: []
     # see examples under st2actionrunner.extra_volumes
+  hpa:
+    # Set to true to enable the Horizontal Pod Autoscaler
+    enabled: false
+    # The minimum number of replicas the HPA should maintain
+    minReplicas: 2
+    # The maximum number of replicas the HPA should scale to
+    maxReplicas: 2
+    # Target average CPU utilization as a percentage (1-100) for scaling the number of replicas
+    cpuUtilization: 80
 
 # https://docs.stackstorm.com/reference/ha.html#st2notifier
 # st2notifier runs in active-active mode and requires for that coordination backend like Redis or Zookeeper
@@ -658,6 +732,15 @@ st2notifier:
   ## Note that Helm templating is supported in 'mount' and 'volume'
   extra_volumes: []
     # see examples under st2actionrunner.extra_volumes
+  hpa:
+    # Set to true to enable the Horizontal Pod Autoscaler
+    enabled: false
+    # The minimum number of replicas the HPA should maintain
+    minReplicas: 2
+    # The maximum number of replicas the HPA should scale to
+    maxReplicas: 2
+    # Target average CPU utilization as a percentage (1-100) for scaling the number of replicas
+    cpuUtilization: 80
 
 # https://docs.stackstorm.com/reference/ha.html#st2actionrunner
 # Multiple st2actionrunner processes can run in active-active with only connections to MongoDB and RabbitMQ. Work gets naturally
@@ -744,6 +827,15 @@ st2actionrunner:
     #   volume:
     #     configMap:
     #       name: "{{ .Release.Name }}-st2-logging-conf"
+  hpa:
+    # Set to true to enable the Horizontal Pod Autoscaler
+    enabled: false
+    # The minimum number of replicas the HPA should maintain
+    minReplicas: 5
+    # The maximum number of replicas the HPA should scale to
+    maxReplicas: 5
+    # Target average CPU utilization as a percentage (1-100) for scaling the number of replicas
+    cpuUtilization: 80
 
 # https://docs.stackstorm.com/reference/ha.html#st2sensorcontainer
 # It is possible to run st2sensorcontainer(s) in one of these modes:
@@ -796,6 +888,15 @@ st2sensorcontainer:
   ## Note that Helm templating is supported in 'mount' and 'volume'
   extra_volumes: []
     # see examples under st2actionrunner.extra_volumes
+  hpa:
+    # Set to true to enable the Horizontal Pod Autoscaler
+    enabled: false
+    # The minimum number of replicas the HPA should maintain
+    minReplicas: 1
+    # The maximum number of replicas the HPA should scale to
+    maxReplicas: 1
+    # Target average CPU utilization as a percentage (1-100) for scaling the number of replicas
+    cpuUtilization: 80
 
 # The st2client deployment/pod simplifies ad-hoc administration.
 # st2client is a special purpose actionrunner pod, but you can customize it separately
@@ -1164,22 +1265,13 @@ zookeeper:
   ## @param replicaCount Number of ZooKeeper nodes
   ##
   replicaCount: 6
-  resources:
-    limits:
-      memory: 4Gi
-      cpu: 2
-    requests:
-      memory: 4Gi
-      cpu: 2
+  resources: {}
   ## ZooKeeper Pod Disruption Budget
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
   ## @param pdb.create Deploy a pdb object for the ZooKeeper pod
   ## @param pdb.minAvailable Minimum available ZooKeeper replicas
   ## @param pdb.maxUnavailable Maximum unavailable ZooKeeper replicas
   ##
-  pdb:
-    create: true
-    maxUnavailable: 1
 
   ## @section Persistence parameters
 
