@@ -135,12 +135,13 @@ Generate list of nodes for Redis with Sentinel connection string, based on numbe
 {{- if not .Values.redis.sentinel.enabled }}
 {{- fail "value for redis.sentinel.enabled MUST be true" }}
 {{- end }}
-{{- $replicas := (int (index .Values "redis" "cluster" "slaveCount")) }}
+{{- $replicas := (int (index .Values "redis" "replica" "replicaCount")) }}
 {{- $master_name := (index .Values "redis" "sentinel" "masterSet") }}
-{{- $sentinel_port := (index .Values "redis" "sentinel" "port") }}
+{{- $socket_timeout := (index .Values "redis" "socketTimeout") }}
+{{- $sentinel_port := (index .Values "redis" "sentinel" "service" "ports" "sentinel") }}
 {{- range $index0 := until $replicas -}}
   {{- if eq $index0 0 -}}
-    {{ $.Release.Name }}-redis-node-{{ $index0 }}.{{ $.Release.Name }}-redis-headless.{{ $.Release.Namespace }}.svc.{{ $.Values.clusterDomain }}:{{ $sentinel_port }}?sentinel={{ $master_name }}
+    {{ $.Release.Name }}-redis-node-{{ $index0 }}.{{ $.Release.Name }}-redis-headless.{{ $.Release.Namespace }}.svc.{{ $.Values.clusterDomain }}:{{ $sentinel_port }}?socket_timeout={{ $socket_timeout }}&sentinel={{ $master_name }}
   {{- else -}}
     &sentinel_fallback={{ $.Release.Name }}-redis-node-{{ $index0 }}.{{ $.Release.Name }}-redis-headless.{{ $.Release.Namespace }}.svc.{{ $.Values.clusterDomain }}:{{ $sentinel_port }}
   {{- end -}}
@@ -152,6 +153,23 @@ Generate list of nodes for Redis with Sentinel connection string, based on numbe
 {{- fail "value for redis.sentinel.enabled MUST be true" }}
 {{- end }}
 {{- if not (empty .Values.redis.password)}}:{{ .Values.redis.password }}@{{- end }}
+{{- end -}}
+
+{{/*
+Generate list of zookeeper hosts for the connection string, based on number of replicas and service name
+*/}}
+{{- define "stackstorm-ha.zookeeper-hosts" -}}
+{{- $replicas := (int (index .Values "zookeeper" "replicaCount")) }}
+{{- $timeout := (index .Values "zookeeper" "timeout") }}
+{{- $zookeeper_port := (index .Values "zookeeper" "service" "ports" "client") }}
+{{- range $index0 := until $replicas -}}
+  {{- if eq $index0 0 -}}
+    {{ $.Release.Name }}-zookeeper-{{ $index0 }}.{{ $.Release.Name }}-zookeeper-headless:{{ $zookeeper_port }}
+  {{- else -}}
+    ,{{ $.Release.Name }}-zookeeper-{{ $index0 }}.{{ $.Release.Name }}-zookeeper-headless:{{ $zookeeper_port }}
+  {{- end -}}
+{{- end -}}
+&timeout={{ $timeout }}&connection_retry={'max_tries': 5, 'delay': 1, 'backoff': 1.5, 'max_delay': 300, 'ignore_expire': True}
 {{- end -}}
 
 {{/*
