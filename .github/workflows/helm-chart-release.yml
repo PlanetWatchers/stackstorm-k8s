@@ -7,10 +7,12 @@ on:
 
 jobs:
   release:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install Helm
         uses: azure/setup-helm@v4.1.0
@@ -32,10 +34,9 @@ jobs:
           cp ./charts-repo/* ./gh-pages/
 
       - name: Commit and push
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          cd ./gh-pages
-          git add .
-          git commit -m "Update Helm chart repository"
-          git push origin gh-pages
+        uses: actions-js/push@master
+        with:
+          branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: true
+          author_name: GitHub Actions
