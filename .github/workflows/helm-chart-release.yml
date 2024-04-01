@@ -18,9 +18,7 @@ jobs:
           git config user.email "actions@github.com"
 
       - name: Install Helm
-        uses: azure/setup-helm@v1
-        with:
-          version: '3.x'
+        uses: azure/setup-helm@v4.1.0
 
       - name: Package Helm Chart
         run: |
@@ -34,7 +32,7 @@ jobs:
 
       - name: Update Helm repository index
         run: |
-          helm repo index ./charts-repo --url https://<username>.github.io/<repository> --merge ./gh-pages/index.yaml
+          helm repo index ./charts-repo --url https://Planetwatchers.github.io/stackstorm-k8s --merge ./gh-pages/index.yaml
           cp ./charts-repo/* ./gh-pages/
 
       - name: Commit and push
