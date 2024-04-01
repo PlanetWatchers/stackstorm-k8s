@@ -12,11 +12,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Configure Git
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-
       - name: Install Helm
         uses: azure/setup-helm@v4.1.0
 
@@ -38,6 +33,8 @@ jobs:
 
       - name: Commit and push
         run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           cd ./gh-pages
           git add .
           git commit -m "Update Helm chart repository"
