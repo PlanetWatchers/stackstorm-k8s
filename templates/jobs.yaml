@@ -528,7 +528,7 @@ spec:
         #     readOnly: false
         #   ephemeral volumes could also work, ... but that config is even deeper.
         command:
-          - 'bash'
+          - 'sh'
           # -e => exit on failure
           # -E => trap ERR is inherited in subfunctions
           - '-eEc'
@@ -536,31 +536,32 @@ spec:
             cat << 'INTRO'
             Testing write permissions for packs volumes.
             If this passes, the pod will automatically be deleted.
-            If this fails, inspect the pod for errors in kubernetes,
+            If this fails, inspect the pod for errors in Kubernetes,
             and then delete this st2canary pod manually.
             INTRO
 
-            function __handle_error__ {
-              cat <<- 'FAIL'
-              ERROR: One or more volumes in st2.packs.volumes (from helm values) does not meet
-              StackStorm's shared volumes requirements!
-              see: https://github.com/StackStorm/stackstorm-k8s#method-2-shared-volumes
+            __handle_error__() {
+              cat << 'FAIL'
+            ERROR: One or more volumes in st2.packs.volumes (from helm values) does not meet
+            StackStorm's shared volumes requirements!
+            see: https://github.com/StackStorm/stackstorm-k8s#method-2-shared-volumes
 
-              HINT: The volumes defined in st2.packs.volumes must use ReadWriteMany (RWX) access mode
-              so StackStorm can dynamically install packs from any of the st2actionrunner pods
-              and have those file changes available in all of the other StackStorm pods.
-              see: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
-              FAIL
+            HINT: The volumes defined in st2.packs.volumes must use ReadWriteMany (RWX) access mode
+            so StackStorm can dynamically install packs from any of the st2actionrunner pods
+            and have those file changes available in all of the other StackStorm pods.
+            see: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+            FAIL
             }
-            trap __handle_error__ ERR
+            trap '__handle_error__' ERR
 
             for volume in packs virtualenvs {{ if $.Values.st2.packs.volumes.configs }}configs{{ end }}; do
-              echo Testing write permissions on ${volume} volume...
-              touch /opt/stackstorm/${volume}/.write-test
-              rm /opt/stackstorm/${volume}/.write-test
+              echo "Testing write permissions on ${volume} volume..."
+              touch "/opt/stackstorm/${volume}/.write-test" || exit 1
+              rm "/opt/stackstorm/${volume}/.write-test" || exit 1
               echo
             done
-            echo DONE
+            echo "DONE"
+
         volumeMounts:
         {{- include "stackstorm-ha.packs-volume-mounts" $ | nindent 8 }}
         {{/* do not include the pack-configs-volume-mount helper here */}}
