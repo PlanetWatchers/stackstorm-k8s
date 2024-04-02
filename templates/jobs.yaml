@@ -528,7 +528,7 @@ spec:
         #     readOnly: false
         #   ephemeral volumes could also work, ... but that config is even deeper.
         command:
-          - 'sh'
+          - 'bash'
           # -e => exit on failure
           # -E => trap ERR is inherited in subfunctions
           - '-eEc'
