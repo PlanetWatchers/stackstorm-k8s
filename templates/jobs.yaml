@@ -528,7 +528,7 @@ spec:
         #     readOnly: false
         #   ephemeral volumes could also work, ... but that config is even deeper.
         command:
-          - 'sh'
+          - sh
           # -e => exit on failure
           # -E => trap ERR is inherited in subfunctions
           - '-eEc'
@@ -541,7 +541,7 @@ spec:
             INTRO
 
             __handle_error__() {
-              cat << 'FAIL'
+            cat <<- 'FAIL'
             ERROR: One or more volumes in st2.packs.volumes (from helm values) does not meet
             StackStorm's shared volumes requirements!
             see: https://github.com/StackStorm/stackstorm-k8s#method-2-shared-volumes
@@ -552,15 +552,20 @@ spec:
             see: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
             FAIL
             }
-            trap '__handle_error__' ERR
 
             for volume in packs virtualenvs {{ if $.Values.st2.packs.volumes.configs }}configs{{ end }}; do
-              echo "Testing write permissions on ${volume} volume..."
-              touch "/opt/stackstorm/${volume}/.write-test" || exit 1
-              rm "/opt/stackstorm/${volume}/.write-test" || exit 1
+              echo Testing write permissions on ${volume} volume...
+              if ! touch /opt/stackstorm/${volume}/.write-test; then
+              __handle_error__
+              exit 1
+              fi
+              if ! rm /opt/stackstorm/${volume}/.write-test; then
+              __handle_error__
+              exit 1
+              fi
               echo
             done
-            echo "DONE"
+            echo DONE
 
         volumeMounts:
         {{- include "stackstorm-ha.packs-volume-mounts" $ | nindent 8 }}
