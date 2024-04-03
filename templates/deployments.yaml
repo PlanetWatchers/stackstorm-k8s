@@ -1315,6 +1315,7 @@ spec:
   template:
     metadata:
       labels: {{- include "stackstorm-ha.labels" (list $ "st2actionrunner") | nindent 8 }}
+        mount-efs: "true"
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmaps_st2-conf.yaml") . | sha256sum }}
         checksum/ssh: {{ include (print $.Template.BasePath "/secrets_ssh.yaml") . | sha256sum }}
@@ -1398,6 +1399,13 @@ spec:
               command: ["/bin/bash", "/post-start.sh"]
         resources:
           {{- toYaml .Values.st2actionrunner.resources | nindent 10 }}
+      topologySpreadConstraints:
+        - maxSkew: 40
+          topologyKey: "kubernetes.io/hostname"
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              mount-efs: "true"
     {{- if .Values.st2actionrunner.serviceAccount.attach }}
       serviceAccountName: {{ template "stackstorm-ha.serviceAccountName" . }}
     {{- end }}
