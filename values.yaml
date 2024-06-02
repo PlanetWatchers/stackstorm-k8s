@@ -1241,30 +1241,30 @@ redis:
 zookeeper:
   #Either redis XOR zookeeper must be enabled for coordination
   enabled: true
-  timeout: 240
+  timeout: 10
 
   ## @section ZooKeeper chart parameters
 
   ## @param maxClientCnxns Limits the number of concurrent connections that a single client may make to a single member of the ZooKeeper ensemble
   ##
-  maxClientCnxns: 600
+  maxClientCnxns: 100
   ## @param maxSessionTimeout Maximum session timeout (in milliseconds) that the server will allow the client to negotiate
   ## Defaults to 20 times the tickTime
   ##
-  maxSessionTimeout: 360000
+  maxSessionTimeout: 40000
   ## @param heapSize Size (in MB) for the Java Heap options (Xmx and Xms)
   ## This env var is ignored if Xmx an Xms are configured via `jvmFlags`
   ##
-  heapSize: "3072"
+  heapSize: 3072
   ## @param logLevel Log level for the ZooKeeper server. ERROR by default
   ## Have in mind if you set it to INFO or WARN the ReadinessProve will produce a lot of logs
   ##
-  logLevel: INFO
+  logLevel: WARN
   ## @section Statefulset parameters
 
   ## @param replicaCount Number of ZooKeeper nodes
   ##
-  replicaCount: 6
+  replicaCount: 3
   resources: {}
   ## ZooKeeper Pod Disruption Budget
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
@@ -1284,7 +1284,6 @@ zookeeper:
     size: 10Gi
   ## @section Metrics parameters
   ##
-
   ## ZooKeeper Prometheus Exporter configuration
   ##
   metrics:
@@ -1303,6 +1302,9 @@ zookeeper:
       ## @param metrics.prometheusRule.enabled Create a PrometheusRule for Prometheus Operator
       ##
       enabled: false
+      ## @param metrics.prometheusRule.namespace Namespace for the PrometheusRule Resource (defaults to the Release Namespace)
+      ##
+      namespace: ""
       ## @param metrics.prometheusRule.additionalLabels Additional labels that can be used so PrometheusRule will be discovered by Prometheus
       ##
       additionalLabels: { }
@@ -1323,6 +1325,12 @@ zookeeper:
       ##      severity: critical
       ##
       rules: [ ]
+      connectionRetry:
+        max_tries: 5
+        delay: 1
+        backoff: 1.5
+        max_delay: 300
+        ignore_expire: true
 
 ##
 ## Settings to be applied to all stackstorm-ha pods

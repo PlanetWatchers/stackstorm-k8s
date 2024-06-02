@@ -162,6 +162,7 @@ Generate list of zookeeper hosts for the connection string, based on number of r
 {{- $replicas := (int (index .Values "zookeeper" "replicaCount")) }}
 {{- $timeout := (index .Values "zookeeper" "timeout") }}
 {{- $zookeeper_port := (index .Values "zookeeper" "service" "ports" "client") }}
+{{- $connection_retry := (index .Values "zookeeper" "connectionRetry") }}
 {{- range $index0 := until $replicas -}}
   {{- if eq $index0 0 -}}
     {{ $.Release.Name }}-zookeeper-{{ $index0 }}.{{ $.Release.Name }}-zookeeper-headless:{{ $zookeeper_port }}
@@ -169,7 +170,7 @@ Generate list of zookeeper hosts for the connection string, based on number of r
     ,{{ $.Release.Name }}-zookeeper-{{ $index0 }}.{{ $.Release.Name }}-zookeeper-headless:{{ $zookeeper_port }}
   {{- end -}}
 {{- end -}}
-&timeout={{ $timeout }}&connection_retry={'max_tries': 5, 'delay': 1, 'backoff': 1.5, 'max_delay': 300, 'ignore_expire': True}
+&timeout={{ $timeout }}&connection_retry={'max_tries': {{ $connection_retry.max_tries }}, 'delay': {{ $connection_retry.delay }}, 'backoff': {{ $connection_retry.backoff }}, 'max_delay': {{ $connection_retry.max_delay }}, 'ignore_expire': {{ $connection_retry.ignore_expire }}}&randomize_hosts=true
 {{- end -}}
 
 {{/*

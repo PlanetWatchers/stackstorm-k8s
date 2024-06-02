@@ -2,7 +2,7 @@ apiVersion: v2
 # StackStorm version which refers to Docker images tag
 appVersion: "3.8"
 name: stackstorm-ha
-version: 1.0.0-pw-0.3
+version: 1.0.0-pw-0.4
 description: StackStorm K8s Helm Chart, optimized for running StackStorm in HA environment.
 home: https://stackstorm.com/
 icon: https://landscape.cncf.io/logos/stack-storm.svg
@@ -45,6 +45,6 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     condition: redis.enabled
   - name: zookeeper
-    version: 10.2.5
+    version: 13.4.0
     repository: https://charts.bitnami.com/bitnami
     condition: zookeeper.enabled
