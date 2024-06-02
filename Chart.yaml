@@ -45,6 +45,8 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     condition: redis.enabled
   - name: zookeeper
-    version: 13.4.0
+    # We can't use a version higher than 10.2.5 because of the following issue: This major version removes commonAnnotations and commonLabels from volumeClaimTemplates. Now annotations and labels can be set in volume claims using persistence.annotations and persistence.labels values. If the previous deployment has already set commonAnnotations and/or commonLabels values, to ensure a clean upgrade from previous version without loosing data, please set persistence.annotations and/or persistence.labels values with the same content as the common values.
+    # The use of bitnami common chart 2.x.x conflicts with other bitnami charts here
+    version: 10.2.5
     repository: https://charts.bitnami.com/bitnami
     condition: zookeeper.enabled

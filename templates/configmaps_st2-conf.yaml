@@ -17,11 +17,13 @@ data:
     ssh_key_file = {{ tpl .Values.st2.system_user.ssh_key_file . }}
     {{- if index .Values "redis" "enabled" }}
     [coordination]
+    {{- if .Values.redis.managed.enabled }}
+    url = rediss://{{ .Values.redis.managed.host }}:{{ .Values.redis.managed.port }}
+    lock_timeout = {{ .Values.redis.lockTimeout }}
+    {{- else if .Values.redis.enabled }}
     url = redis://{{ template "stackstorm-ha.redis-password" $ }}{{ template "stackstorm-ha.redis-nodes" $ }}
-    lock_timeout = {{ index .Values "redis" "lockTimeout" }}
-    {{- end }}
-    {{- if index .Values "zookeeper" "enabled" }}
-    [coordination]
+    lock_timeout = {{ .Values.redis.lockTimeout }}
+    {{- else if .Values.zookeeper.enabled }}
     url = kazoo://?hosts={{ template "stackstorm-ha.zookeeper-hosts" $ }}
     {{- end }}
     {{- if index .Values "rabbitmq" "enabled" }}

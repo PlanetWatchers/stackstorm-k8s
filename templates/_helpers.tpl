@@ -132,7 +132,7 @@ Generate comma-separated list of nodes for MongoDB-HA connection string, based o
 Generate list of nodes for Redis with Sentinel connection string, based on number of replicas and service name
 */}}
 {{- define "stackstorm-ha.redis-nodes" -}}
-{{- if not .Values.redis.sentinel.enabled }}
+{{- if and (not .Values.redis.managed.enabled) (.Values.redis.sentinel.enabled) }}
 {{- fail "value for redis.sentinel.enabled MUST be true" }}
 {{- end }}
 {{- $replicas := (int (index .Values "redis" "replica" "replicaCount")) }}
