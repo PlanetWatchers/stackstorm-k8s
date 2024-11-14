@@ -1038,6 +1038,14 @@ mongodb:
   arbiter:
     enabled: false
   resources: {}
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      namespace: monitoring
+      additionalLabels:
+        #Required by the default prometheus
+        release: monitoring
 
 ##
 ## RabbitMQ configuration (3rd party chart dependency)
@@ -1095,11 +1103,13 @@ rabbitmq:
 redis:
   # Change to `false` to disable in-cluster redis deployment.
   # Specify your external [coordination] connection parameters under st2.config
-  enabled: true
+  enabled: false
   # By default the cluster is enabled for the subchart.
   # We just need replica count here to ensure it is HA
-  cluster:
-    slaveCount: 3
+  master:
+    count: 1
+  replica:
+    replicaCount: 3
   # Sentinel settings. Sentinel is enabled for better resiliency.
   # This is highly recommended as per tooz library documentation.
   # Hence, the chart requires the setting.
@@ -1110,17 +1120,117 @@ redis:
     # DO NOT SET sentinel.usePassword, the tooz driver cannot connect to a password protected sentinel
     # however it can connect to a password protected redis that is being managed by sentinel
     # usePassword: false
-    # Enable or disable static sentinel IDs for each replicas
-    # If disabled each sentinel will generate a random id at startup
-    # If enabled, each replicas will have a constant ID on each start-up
-    staticID: true
   # if redis.usePassword is true, you can set the password here
   # password: mysupersecretpassword
   networkPolicy:
     enabled: false
-  usePassword: false
-  metrics:
+  socketTimeout: 90
+  lockTimeout: 150
+  auth:
     enabled: false
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      namespace: monitoring
+      additionalLabels:
+        #Required by the default prometheus
+        release: monitoring
+
+zookeeper:
+  #Either redis XOR zookeeper must be enabled for coordination
+  enabled: true
+  timeout: 240
+
+  ## @section ZooKeeper chart parameters
+
+  ## @param maxClientCnxns Limits the number of concurrent connections that a single client may make to a single member of the ZooKeeper ensemble
+  ##
+  maxClientCnxns: 600
+  ## @param maxSessionTimeout Maximum session timeout (in milliseconds) that the server will allow the client to negotiate
+  ## Defaults to 20 times the tickTime
+  ##
+  maxSessionTimeout: 360000
+  ## @param heapSize Size (in MB) for the Java Heap options (Xmx and Xms)
+  ## This env var is ignored if Xmx an Xms are configured via `jvmFlags`
+  ##
+  heapSize: "3072"
+  ## @param logLevel Log level for the ZooKeeper server. ERROR by default
+  ## Have in mind if you set it to INFO or WARN the ReadinessProve will produce a lot of logs
+  ##
+  logLevel: INFO
+  ## @section Statefulset parameters
+
+  ## @param replicaCount Number of ZooKeeper nodes
+  ##
+  replicaCount: 6
+  resources:
+    limits:
+      memory: 4Gi
+      cpu: 2
+    requests:
+      memory: 4Gi
+      cpu: 2
+  ## ZooKeeper Pod Disruption Budget
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+  ## @param pdb.create Deploy a pdb object for the ZooKeeper pod
+  ## @param pdb.minAvailable Minimum available ZooKeeper replicas
+  ## @param pdb.maxUnavailable Maximum unavailable ZooKeeper replicas
+  ##
+  pdb:
+    create: true
+    maxUnavailable: 1
+
+  ## @section Persistence parameters
+
+  ## Enable persistence using Persistent Volume Claims
+  ## ref: https://kubernetes.io/docs/user-guide/persistent-volumes/
+  ##
+  persistence:
+    ## @param persistence.size PVC Storage Request for ZooKeeper data volume
+    ##
+    size: 10Gi
+  ## @section Metrics parameters
+  ##
+
+  ## ZooKeeper Prometheus Exporter configuration
+  ##
+  metrics:
+    ## @param metrics.enabled Enable Prometheus to access ZooKeeper metrics endpoint
+    ##
+    enabled: true
+
+    serviceMonitor:
+      ## @param metrics.serviceMonitor.enabled Create ServiceMonitor Resource for scraping metrics using Prometheus Operator
+      ##
+      enabled: true
+      namespace: monitoring
+      additionalLabels:
+        release: monitoring
+    prometheusRule:
+      ## @param metrics.prometheusRule.enabled Create a PrometheusRule for Prometheus Operator
+      ##
+      enabled: false
+      ## @param metrics.prometheusRule.additionalLabels Additional labels that can be used so PrometheusRule will be discovered by Prometheus
+      ##
+      additionalLabels: { }
+      ## @param metrics.prometheusRule.rules PrometheusRule definitions
+      ##  - alert: ZooKeeperSyncedFollowers
+      ##    annotations:
+      ##      message: The number of synced followers for the leader node in ZooKeeper deployment my-release is less than 2. This usually means that some of the ZooKeeper nodes aren't communicating properly. If it doesn't resolve itself you can try killing the pods (one by one).
+      ##    expr: max(synced_followers{service="my-release-metrics"}) < 2
+      ##    for: 5m
+      ##    labels:
+      ##      severity: critical
+      ##  - alert: ZooKeeperOutstandingRequests
+      ##    annotations:
+      ##      message: The number of outstanding requests for ZooKeeper pod {{ $labels.pod }} is greater than 10. This can indicate a performance issue with the Pod or cluster a whole.
+      ##    expr: outstanding_requests{service="my-release-metrics"} > 10
+      ##    for: 5m
+      ##    labels:
+      ##      severity: critical
+      ##
+      rules: [ ]
 
 ##
 ## Settings to be applied to all stackstorm-ha pods
