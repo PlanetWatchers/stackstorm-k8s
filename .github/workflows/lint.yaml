@@ -31,7 +31,7 @@ jobs:
 
       - name: Cache community
         id: cache-community
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: community
           key: ${{ runner.os }}-community-${{ hashFiles('conf/**', 'templates/**', 'Chart.yaml', 'values.yaml') }}
@@ -52,7 +52,7 @@ jobs:
 
       - name: Cache community
         id: cache-community
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: community
           key: ${{ runner.os }}-community-${{ hashFiles('conf/**', 'templates/**', 'Chart.yaml', 'values.yaml') }}
